@@ -1,0 +1,54 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: pvc-monitor
+  labels:
+    prometheus: pvc-monitor
+spec:
+  groups:
+  - name: pvc-monitor.rules
+    rules:
+    - alert: NoSnapshotsFound
+      expr: do_snapshots_found_total == 0
+      for: 5m
+      labels:
+        severity: info
+      annotations:
+        summary: "No Snapshots Found"
+        description: "No snapshots were found during the snapshot cleanup process."
+
+    - alert: SnapshotDeletionErrors
+      expr: do_snapshot_deletion_errors_total > 0
+      for: 5m
+      labels:
+        severity: critical
+      annotations:
+        summary: "Snapshot Deletion Errors"
+        description: "Errors occurred while deleting snapshots."
+
+    - alert: SnapshotCleanupDurationHigh
+      expr: do_snapshot_cleanup_duration_seconds > 300
+      for: 5m
+      labels:
+        severity: warning
+      annotations:
+        summary: "Snapshot Cleanup Duration High"
+        description: "The snapshot cleanup process is taking longer than expected."
+
+    - alert: HighSnapshotCount
+      expr: do_snapshots_found_total > 100
+      for: 5m
+      labels:
+        severity: critical
+      annotations:
+        summary: "High Number of Snapshots Found"
+        description: "More than 100 snapshots were found during the snapshot cleanup process."
+
+    - alert: HighSnapshotDeletionCount
+      expr: do_snapshots_deleted_total > 50
+      for: 5m
+      labels:
+        severity: warning
+      annotations:
+        summary: "High Number of Snapshots Deleted"
+        description: "More than 50 snapshots were deleted during the snapshot cleanup process."

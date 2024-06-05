@@ -1,0 +1,13 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PodMonitor
+metadata:
+  labels:
+    app: pvc-monitor
+  name: pvc-monitor
+spec:
+  podMetricsEndpoints:
+    - interval: 15s
+      port: metrics
+  selector:
+    matchLabels:
+      app: pvc-monitor
