@@ -111,8 +111,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: ${{ github.ref }}
-          release_name: Release ${{ github.ref_name }}
+          tag_name: v${{ github.run_number }}
+          release_name: Release v${{ github.run_number }}
           draft: false
           prerelease: false
 
@@ -122,8 +122,8 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: .helm/repo/prometheus-tunnel-${{ env.TAG_NAME }}.tgz
-          asset_name: prometheus-tunnel-${{ env.TAG_NAME }}.tgz
+          asset_path: helm/repo/prometheus-tunnel-v${{ github.run_number }}".tgz
+          asset_name: prometheus-tunnel-v${{ github.run_number }}".tgz
           asset_content_type: application/octet-stream          
 
       - name: Checkout helm-chart repository
