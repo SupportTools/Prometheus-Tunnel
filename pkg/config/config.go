@@ -10,20 +10,22 @@ import (
 type AppConfig struct {
 	Debug       bool   `json:"debug"`
 	MetricsPort int    `json:"metricsPort"`
-	ServerIp    string `json:"serverIp"`
+	ServerIP    string `json:"ServerIP"`
 	ServerPort  int    `json:"serverPort"`
 }
 
+// CFG is the global configuration instance populated by LoadConfiguration.
 var CFG AppConfig
 
 // LoadConfiguration loads the configuration from the environment variables.
 func LoadConfiguration() {
 	CFG.Debug = parseEnvBool("DEBUG", false)
 	CFG.MetricsPort = parseEnvInt("METRICS_PORT", 9182)
-	CFG.ServerIp = getEnvOrDefault("SERVER_IP", "")
+	CFG.ServerIP = getEnvOrDefault("SERVER_IP", "")
 	CFG.ServerPort = parseEnvInt("SERVER_PORT", 9182)
 }
 
+// getEnvOrDefault returns the value of the environment variable with the given key or the default value if the key is not set.
 func getEnvOrDefault(key, defaultValue string) string {
 	if value, exists := os.LookupEnv(key); exists {
 		return value
@@ -31,6 +33,7 @@ func getEnvOrDefault(key, defaultValue string) string {
 	return defaultValue
 }
 
+// parseEnvInt parses the environment variable with the given key and returns its integer representation or the default value if the key is
 func parseEnvInt(key string, defaultValue int) int {
 	value, exists := os.LookupEnv(key)
 	if !exists {
@@ -44,6 +47,7 @@ func parseEnvInt(key string, defaultValue int) int {
 	return intValue
 }
 
+// parseEnvBool parses the environment variable with the given key and returns its boolean representation or the default value if the key is not set.
 func parseEnvBool(key string, defaultValue bool) bool {
 	value, exists := os.LookupEnv(key)
 	if !exists {

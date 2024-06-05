@@ -7,6 +7,7 @@ import (
 	"os/signal"
 	"strconv"
 	"syscall"
+	"time"
 
 	"github.com/supporttools/prometheus-tunnel/pkg/config"
 	"github.com/supporttools/prometheus-tunnel/pkg/logging"
@@ -33,14 +34,21 @@ func main() {
 	done := make(chan bool, 1)
 
 	// Create and start proxy server
-	proxyHandler, err := proxy.NewProxyHandler(config.CFG.ServerIp, config.CFG.ServerPort, config.CFG.Debug)
+	proxyHandler, err := proxy.NewProxyHandler(config.CFG.ServerIP, config.CFG.ServerPort, config.CFG.Debug)
 	if err != nil {
 		log.Fatalf("Failed to create proxy handler: %v", err)
 	}
 
 	go func() {
 		log.Printf("Starting proxy server on port %d\n", config.CFG.ServerPort)
-		if err := http.ListenAndServe(":"+strconv.Itoa(config.CFG.ServerPort), http.HandlerFunc(proxyHandler)); err != nil {
+		srv := &http.Server{
+			Addr:         ":" + strconv.Itoa(config.CFG.ServerPort),
+			Handler:      http.HandlerFunc(proxyHandler),
+			ReadTimeout:  5 * time.Second,
+			WriteTimeout: 10 * time.Second,
+			IdleTimeout:  15 * time.Second,
+		}
+		if err := srv.ListenAndServe(); err != nil {
 			log.Fatal(err)
 		}
 	}()

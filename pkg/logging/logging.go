@@ -12,6 +12,7 @@ import (
 
 var log = SetupLogging(config.CFG.Debug) // Initialize the logger
 
+// LogFile returns a log entry with the filename and line number
 func LogFile() *logrus.Entry {
 	_, filename, line, ok := runtime.Caller(1)
 	if !ok {
@@ -29,6 +30,7 @@ func LogFile() *logrus.Entry {
 	return log.WithField("line", line)
 }
 
+// SetupLogging initializes the logger with the specified log level
 func SetupLogging(debug bool) *logrus.Logger {
 	logger := logrus.New()
 	logger.SetReportCaller(true)
@@ -50,6 +52,7 @@ func SetupLogging(debug bool) *logrus.Logger {
 	return logger
 }
 
+// GetRelativePath returns the relative path of a file from the working directory
 func GetRelativePath(filePath string) string {
 	wd, err := os.Getwd()
 	if err != nil {

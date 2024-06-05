@@ -15,13 +15,14 @@ import (
 var logger = logging.SetupLogging(config.CFG.Debug)
 
 var (
-	// Metrics for tracking requests
+	// TotalRequests tracks the total number of requests received
 	TotalRequests = prometheus.NewCounter(
 		prometheus.CounterOpts{
 			Name: "proxy_total_requests",
 			Help: "Total number of requests received",
 		},
 	)
+	// RequestDuration tracks the duration of requests
 	RequestDuration = prometheus.NewHistogram(
 		prometheus.HistogramOpts{
 			Name:    "proxy_request_duration_seconds",
@@ -29,6 +30,7 @@ var (
 			Buckets: prometheus.DefBuckets,
 		},
 	)
+	// ResponseStatus tracks the total number of responses sent, partitioned by status code
 	ResponseStatus = prometheus.NewCounterVec(
 		prometheus.CounterOpts{
 			Name: "proxy_response_status_total",
@@ -48,6 +50,7 @@ func init() {
 	)
 }
 
+// StartMetricsServer starts the metrics server
 func StartMetricsServer() {
 	mux := http.NewServeMux()
 	mux.Handle("/metrics", promhttp.Handler())
@@ -58,7 +61,15 @@ func StartMetricsServer() {
 	serverPortStr := strconv.Itoa(config.CFG.MetricsPort)
 	logger.Printf("Metrics server starting on port %s\n", serverPortStr)
 
-	if err := http.ListenAndServe(":"+serverPortStr, mux); err != nil {
+	srv := &http.Server{
+		Addr:         ":" + serverPortStr,
+		Handler:      mux,
+		ReadTimeout:  5 * time.Second,
+		WriteTimeout: 10 * time.Second,
+		IdleTimeout:  15 * time.Second,
+	}
+
+	if err := srv.ListenAndServe(); err != nil {
 		logger.Fatalf("Metrics server failed to start: %v", err)
 	}
 }
@@ -87,6 +98,7 @@ type statusCapturingResponseWriter struct {
 	statusCode int
 }
 
+// WriteHeader captures the status code
 func (w *statusCapturingResponseWriter) WriteHeader(statusCode int) {
 	w.statusCode = statusCode
 	w.ResponseWriter.WriteHeader(statusCode)

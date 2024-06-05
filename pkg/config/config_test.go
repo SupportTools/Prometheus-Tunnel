@@ -16,11 +16,11 @@ func TestLoadConfiguration(t *testing.T) {
 	if !CFG.Debug {
 		t.Errorf("Expected Debug to be true, got %v", CFG.Debug)
 	}
-	if CFG.MetricsPort != 8080 {
-		t.Errorf("Expected MetricsPort to be 8080, got %d", CFG.MetricsPort)
+	if CFG.MetricsPort != 9182 {
+		t.Errorf("Expected MetricsPort to be 9182, got %d", CFG.MetricsPort)
 	}
-	if CFG.ServerIp != "192.168.3.1" {
-		t.Errorf("Expected ServerIp to be '192.168.3.1', got %v", CFG.ServerIp)
+	if CFG.ServerIP != "192.168.3.1" {
+		t.Errorf("Expected ServerIP to be '192.168.3.1', got %v", CFG.ServerIP)
 	}
 	if CFG.ServerPort != 9182 {
 		t.Errorf("Expected ServerPort to be 9182, got %d", CFG.ServerPort)

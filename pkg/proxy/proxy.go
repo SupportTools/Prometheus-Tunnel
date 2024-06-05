@@ -11,8 +11,8 @@ import (
 )
 
 // NewProxyHandler creates a new proxy handler function
-func NewProxyHandler(serverIp string, serverPort int, debug bool) (func(w http.ResponseWriter, r *http.Request), error) {
-	serverURL := "http://" + serverIp + ":" + strconv.Itoa(serverPort)
+func NewProxyHandler(serverIP string, serverPort int, debug bool) (func(w http.ResponseWriter, r *http.Request), error) {
+	serverURL := "http://" + serverIP + ":" + strconv.Itoa(serverPort)
 	proxyURL, err := url.Parse(serverURL)
 	if err != nil {
 		return nil, fmt.Errorf("failed to parse server URL: %v", err)
