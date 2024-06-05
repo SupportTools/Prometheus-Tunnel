@@ -2,12 +2,12 @@ apiVersion: monitoring.coreos.com/v1
 kind: PodMonitor
 metadata:
   labels:
-    app: pvc-monitor
-  name: pvc-monitor
+    app: prometheus-tunnel
+  name: prometheus-tunnel
 spec:
   podMetricsEndpoints:
     - interval: 15s
       port: metrics
   selector:
     matchLabels:
-      app: pvc-monitor
+      app: prometheus-tunnel

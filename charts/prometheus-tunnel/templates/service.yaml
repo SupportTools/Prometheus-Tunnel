@@ -1,12 +1,12 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: "pvc-monitor"
+  name: "prometheus-tunnel"
   labels:
-    app: "pvc-monitor"
+    app: "prometheus-tunnel"
   annotations:
     prometheus.io/scrape: "true"
-    prometheus.io/port: "9000"
+    prometheus.io/port: "{{ .Values.service.port }}"
     prometheus.io/path: "/metrics"
 spec:
   type: ClusterIP
@@ -16,4 +16,4 @@ spec:
       protocol: TCP
       name: metrics
   selector:
-    app: "pvc-monitor"
+    app: "prometheus-tunnel"

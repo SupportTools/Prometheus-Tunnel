@@ -1,54 +1,54 @@
 apiVersion: monitoring.coreos.com/v1
 kind: PrometheusRule
 metadata:
-  name: pvc-monitor
+  name: prometheus-tunnel
   labels:
-    prometheus: pvc-monitor
+    prometheus: prometheus-tunnel
 spec:
   groups:
-  - name: pvc-monitor.rules
+  - name: prometheus-tunnel.rules
     rules:
-    - alert: NoSnapshotsFound
-      expr: do_snapshots_found_total == 0
-      for: 5m
-      labels:
-        severity: info
-      annotations:
-        summary: "No Snapshots Found"
-        description: "No snapshots were found during the snapshot cleanup process."
-
-    - alert: SnapshotDeletionErrors
-      expr: do_snapshot_deletion_errors_total > 0
-      for: 5m
-      labels:
-        severity: critical
-      annotations:
-        summary: "Snapshot Deletion Errors"
-        description: "Errors occurred while deleting snapshots."
-
-    - alert: SnapshotCleanupDurationHigh
-      expr: do_snapshot_cleanup_duration_seconds > 300
+    - alert: HighRequestRate
+      expr: rate(proxy_total_requests[5m]) > 100
       for: 5m
       labels:
         severity: warning
       annotations:
-        summary: "Snapshot Cleanup Duration High"
-        description: "The snapshot cleanup process is taking longer than expected."
+        summary: "High Request Rate"
+        description: "The request rate has exceeded 100 requests per minute."
 
-    - alert: HighSnapshotCount
-      expr: do_snapshots_found_total > 100
-      for: 5m
-      labels:
-        severity: critical
-      annotations:
-        summary: "High Number of Snapshots Found"
-        description: "More than 100 snapshots were found during the snapshot cleanup process."
-
-    - alert: HighSnapshotDeletionCount
-      expr: do_snapshots_deleted_total > 50
+    - alert: SlowRequestDuration
+      expr: histogram_quantile(0.99, rate(proxy_request_duration_seconds_bucket[5m])) > 1
       for: 5m
       labels:
         severity: warning
       annotations:
-        summary: "High Number of Snapshots Deleted"
-        description: "More than 50 snapshots were deleted during the snapshot cleanup process."
+        summary: "Slow Request Duration"
+        description: "99th percentile request duration is greater than 1 second."
+
+    - alert: HighErrorRate
+      expr: rate(proxy_response_status_total{status=~"5.."}[5m]) > 10
+      for: 5m
+      labels:
+        severity: critical
+      annotations:
+        summary: "High Error Rate"
+        description: "The rate of 5xx errors has exceeded 10 errors per minute."
+
+    - alert: HighLatency
+      expr: rate(proxy_request_duration_seconds_sum[5m]) / rate(proxy_request_duration_seconds_count[5m]) > 0.5
+      for: 5m
+      labels:
+        severity: critical
+      annotations:
+        summary: "High Request Latency"
+        description: "The average request latency is greater than 0.5 seconds."
+
+    - alert: HighRequestVolume
+      expr: sum(rate(proxy_total_requests[5m])) by (job) > 1000
+      for: 5m
+      labels:
+        severity: warning
+      annotations:
+        summary: "High Request Volume"
+        description: "The total request volume has exceeded 1000 requests per minute."
