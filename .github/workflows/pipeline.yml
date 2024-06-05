@@ -79,7 +79,7 @@ jobs:
             --push \
             -f Dockerfile .
 
-  helm-packaging-and-repo-update:
+  publish:
     runs-on: ubuntu-latest
     needs: build
 
