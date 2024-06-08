@@ -1,23 +1,44 @@
-# Start from the official Go image
-FROM golang:1.22.4 as builder
+# Use golang alpine image as the builder stage
+FROM golang:1.22.4-alpine3.20 AS builder
+
+# Install git.
+# Git is required for fetching the dependencies.
+RUN apk update && apk add --no-cache git
 
 # Set the Current Working Directory inside the container
-WORKDIR /app
+WORKDIR /src
 
-# Copy the source from the current directory to the Working Directory inside the container
+# Copy everything from the current directory to the PWD(Present Working Directory) inside the container
 COPY . .
 
-# Build the Go app
-RUN go build -o prometheus-tunnel .
+# Fetch dependencies using go mod if your project uses Go modules
+RUN go mod download
 
-# Start a new stage from scratch
-FROM scratch
+# Version and Git Commit build arguments
+ARG VERSION
+ARG GIT_COMMIT
+ARG BUILD_DATE
 
-# Copy the Pre-built binary file from the previous stage
-COPY --from=builder /app/prometheus-tunnel /prometheus-tunnel
+# Build the Go app with versioning information
+RUN GOOS=linux GOARCH=amd64 go build -ldflags "-X github.com/supporttools/Prometheus-Tunnel/pkg/version.Version=$VERSION -X github.com/supporttools/Prometheus-Tunnel/pkg/version.GitCommit=$GIT_COMMIT -X github.com/supporttools/Prometheus-Tunnel/pkg/version.BuildTime=$BUILD_DATE" -o /bin/prometheus-tunnel
+RUN chmod +x /bin/prometheus-tunnel
 
-# Expose port 9000 to the outside world
-EXPOSE 9000
+# Use ubuntu as the final image
+FROM ubuntu:latest
 
-# Command to run the executable
-CMD ["/prometheus-tunnel"]
+# Install Common Dependencies
+RUN apt-get update && \
+    apt install -y \
+    ca-certificates \
+    curl \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
+
+# Set the Current Working Directory inside the container
+WORKDIR /root/
+
+# Copy our static executable.
+COPY --from=builder /bin/prometheus-tunnel /bin/prometheus-tunnel
+
+# Run the prometheus-tunnel binary.
+ENTRYPOINT ["/bin/prometheus-tunnel"]
