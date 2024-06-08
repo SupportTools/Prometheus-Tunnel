@@ -10,17 +10,17 @@ metadata:
     prometheus-tunnel/name: "{{ .Values.settings.name }}"    
   annotations:
     prometheus.io/scrape: "true"
-    prometheus.io/port: "{{ .Values.service.port }}"
+    prometheus.io/port: "{{ .Values.service.port | int }}"
     prometheus.io/path: "/metrics"
 spec:
   type: ClusterIP
   ports:
-    - port: "{{ .Values.settings.serverPort }}"
-      targetPort: "{{ .Values.settings.serverPort }}"
+    - port: {{ .Values.settings.serverPort | int }}
+      targetPort: {{ .Values.settings.serverPort | int }}
       protocol: TCP
       name: metrics
-    - port: "{{ .Values.settings.metrics.port }}"
-      targetPort: "{{ .Values.settings.metrics.port }}"
+    - port: {{ .Values.settings.metrics.port | int }}
+      targetPort: {{ .Values.settings.metrics.port | int }}
       protocol: TCP
       name: http
   clusterIP: None
@@ -29,4 +29,3 @@ spec:
     prometheus-tunnel/serverIP: "{{ .Values.settings.serverIP }}"
     prometheus-tunnel/serverPort: "{{ .Values.settings.serverPort }}"
     prometheus-tunnel/name: "{{ .Values.settings.name }}"
-
