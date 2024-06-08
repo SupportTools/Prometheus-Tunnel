@@ -15,10 +15,15 @@ metadata:
 spec:
   type: ClusterIP
   ports:
-    - port: {{.Values.service.port }}
-      targetPort: {{.Values.service.port }}
+    - port: "{{ .Values.settings.serverPort }}"
+      targetPort: "{{ .Values.settings.serverPort }}"
       protocol: TCP
       name: metrics
+    - port: "{{ .Values.settings.metrics.port }}"
+      targetPort: "{{ .Values.settings.metrics.port }}"
+      protocol: TCP
+      name: http
+  clusterIP: None
   selector:
     app: "prometheus-tunnel"
     prometheus-tunnel/serverIP: "{{ .Values.settings.serverIP }}"

@@ -49,6 +49,9 @@ spec:
             - name: metrics
               containerPort: {{ .Values.settings.serverPort }}
               protocol: TCP
+            - name: http
+              containerPort: 9000
+              protocol: TCP
           livenessProbe:
             httpGet:
               path: /healthz

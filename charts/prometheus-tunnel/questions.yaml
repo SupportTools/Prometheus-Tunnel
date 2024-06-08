@@ -14,7 +14,7 @@ questions:
     group: "Metrics Settings"
 
   - variable: settings.metrics.port
-    default: 9182
+    default: 9000
     description: "Port on which the metrics server will be available."
     label: "Metrics Server Port"
     type: int
