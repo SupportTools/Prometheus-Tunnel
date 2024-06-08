@@ -20,6 +20,13 @@ questions:
     type: int
     group: "Metrics Settings"
 
+  - variable: settings.name
+    default: "server01"
+    description: "Name of the server for which the tunnel will be established."
+    label: "Server Name"
+    type: string
+    group: "Server Settings"
+
   - variable: settings.serverIP
     default: "1.2.3.4"
     description: "IP address of the server to which the tunnel will be established."
