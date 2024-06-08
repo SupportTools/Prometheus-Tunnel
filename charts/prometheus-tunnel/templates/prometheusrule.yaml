@@ -1,9 +1,14 @@
+{{ if .Values.settings.rules }}
 apiVersion: monitoring.coreos.com/v1
 kind: PrometheusRule
 metadata:
-  name: prometheus-tunnel
+  name: "{{ .Release.Name }}"
   labels:
     prometheus: prometheus-tunnel
+    release: "{{ .Release.Name }}"
+    prometheus-tunnel/serverIP: "{{ .Values.settings.serverIP }}"
+    prometheus-tunnel/serverPort: "{{ .Values.settings.serverPort }}"
+    prometheus-tunnel/name: "{{ .Values.settings.name }}"    
 spec:
   groups:
   - name: prometheus-tunnel.rules
@@ -52,3 +57,4 @@ spec:
       annotations:
         summary: "High Request Volume"
         description: "The total request volume has exceeded 1000 requests per minute."
+{{ end }}

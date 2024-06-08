@@ -3,7 +3,11 @@ kind: PodMonitor
 metadata:
   labels:
     app: prometheus-tunnel
-  name: prometheus-tunnel
+    release: "{{ .Release.Name }}"
+    prometheus-tunnel/serverIP: "{{ .Values.settings.serverIP }}"
+    prometheus-tunnel/serverPort: "{{ .Values.settings.serverPort }}"
+    prometheus-tunnel/name: "{{ .Values.settings.name }}"    
+  name: "{{ .Release.Name }}"
 spec:
   podMetricsEndpoints:
     - interval: 15s
@@ -11,3 +15,7 @@ spec:
   selector:
     matchLabels:
       app: prometheus-tunnel
+      release: "{{ .Release.Name }}"
+      prometheus-tunnel/serverIP: "{{ .Values.settings.serverIP }}"
+      prometheus-tunnel/serverPort: "{{ .Values.settings.serverPort }}"
+      prometheus-tunnel/name: "{{ .Values.settings.name }}"      

@@ -1,9 +1,14 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: "prometheus-tunnel"
+  name: "{{ .Release.Name }}"
   labels:
     app: "prometheus-tunnel"
+    release: "{{ .Release.Name }}"
+    prometheus-tunnel/serverIP: "{{ .Values.settings.serverIP }}"
+    prometheus-tunnel/serverPort: "{{ .Values.settings.serverPort }}"
+    prometheus-tunnel/name: "{{ .Values.settings.name }}"
+spec:
   annotations:
     prometheus.io/scrape: "true"
     prometheus.io/port: "{{ .Values.service.port }}"
@@ -13,6 +18,9 @@ spec:
   selector:
     matchLabels:
       app: "prometheus-tunnel"
+      prometheus-tunnel/serverIP: "{{ .Values.settings.serverIP }}"
+      prometheus-tunnel/serverPort: "{{ .Values.settings.serverPort }}"
+      prometheus-tunnel/name: "{{ .Values.settings.name }}"
   template:
     metadata:
       annotations:
@@ -21,6 +29,9 @@ spec:
         prometheus.io/path: "/metrics"
       labels:
         app: "prometheus-tunnel"
+        prometheus-tunnel/serverIP: "{{ .Values.settings.serverIP }}"
+        prometheus-tunnel/serverPort: "{{ .Values.settings.serverPort }}"
+        prometheus-tunnel/name: "{{ .Values.settings.name }}"
     spec:
       {{- with .Values.imagePullSecrets }}
       imagePullSecrets:

@@ -25,9 +25,18 @@ questions:
     description: "IP address of the server to which the tunnel will be established."
     label: "Server IP Address"
     type: string
+    group: "Server Settings"
 
   - variable: settings.serverPort
     default: 9182
     description: "Port on the server to which the tunnel will be established."
     label: "Server Port"
     type: int
+    group: "Server Settings"
+
+  - variable: settings.rules
+    default: true
+    description: "Enable Prometheus alerting rules."
+    label: "Enable Prometheus Alerting Rules"
+    type: bool
+    group: "Alerting Settings"

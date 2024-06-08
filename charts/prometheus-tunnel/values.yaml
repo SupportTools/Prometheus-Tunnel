@@ -8,11 +8,13 @@ settings:
     port: 9182
   serverIP: "1.2.3.4"
   serverPort: 9182
+  name: "server01"
+  rules: enabled
 
 replicaCount: 1
 
 image:
-  repository: cube8021/prometheus-tunnel
+  repository: supporttools/prometheus-tunnel
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
   tag: ${IMAGE_TAG}
