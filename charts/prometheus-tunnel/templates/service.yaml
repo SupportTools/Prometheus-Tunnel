@@ -15,14 +15,14 @@ metadata:
 spec:
   type: ClusterIP
   ports:
-    - port: {{ .Values.settings.serverPort | int }}
+    - name: metrics
+      port: {{ .Values.settings.serverPort | int }}
       targetPort: {{ .Values.settings.serverPort | int }}
       protocol: TCP
-      name: metrics
-    - port: {{ .Values.settings.metrics.port | int }}
+    - name: internalmetrics
+      port: {{ .Values.settings.metrics.port | int }}
       targetPort: {{ .Values.settings.metrics.port | int }}
       protocol: TCP
-      name: http
   clusterIP: None
   selector:
     app: "prometheus-tunnel"
