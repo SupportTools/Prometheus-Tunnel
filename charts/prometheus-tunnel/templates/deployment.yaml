@@ -9,11 +9,6 @@ metadata:
     prometheus-tunnel/serverPort: "{{ .Values.settings.serverPort }}"
     prometheus-tunnel/name: "{{ .Values.settings.name }}"
 spec:
-  annotations:
-    prometheus.io/scrape: "true"
-    prometheus.io/port: "{{ .Values.service.port }}"
-    prometheus.io/path: "/metrics"
-spec:
   replicas: {{ .Values.replicaCount }}
   selector:
     matchLabels:
@@ -47,10 +42,10 @@ spec:
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           ports:
             - name: metrics
-              containerPort: {{ .Values.settings.serverPort }}
+              containerPort: {{ .Values.settings.serverPort | int }}
               protocol: TCP
             - name: http
-              containerPort: 9000
+              containerPort: {{ .Values.settings.metrics.port | int }}
               protocol: TCP
           livenessProbe:
             httpGet:
@@ -62,13 +57,13 @@ spec:
               port: metrics
           env:
             - name: DEBUG
-              value: "{{ .Values.settings.debug }}"
+              value: "{{ .Values.settings.debug | quote }}"
             - name: METRICS_PORT
-              value: "{{ .Values.settings.metrics.port }}"
+              value: "{{ .Values.settings.metrics.port | quote }}"
             - name: SERVER_IP
               value: "{{ .Values.settings.serverIP }}"
             - name: SERVER_PORT
-              value: "{{ .Values.settings.serverPort }}"
+              value: "{{ .Values.settings.serverPort | quote }}"
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
           {{- with .Values.volumeMounts }}
